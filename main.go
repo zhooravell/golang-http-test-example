@@ -47,10 +47,12 @@ func main() {
 // Handler to get BitCoin rate
 func handler(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
+	var mux sync.RWMutex
 	var result []float64
 
+	wg.Add(len(rateResources))
+
 	for _, res := range rateResources {
-		wg.Add(1)
 		go func(res coins_rate.Resource) {
 			defer wg.Done()
 			rate, err := res.BitCoinToUSDRate(nil)
@@ -59,8 +61,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 				log.Println(err)
 				return
 			}
-
+			mux.Lock()
 			result = append(result, rate)
+			mux.Unlock()
 		}(res)
 	}
 
