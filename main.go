@@ -33,12 +33,6 @@ func init() {
 }
 
 func main() {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("run time panic: %v", r)
-		}
-	}()
-
 	http.HandleFunc("/", handler)
 
 	log.Fatal(http.ListenAndServe(apiAddress, nil))
