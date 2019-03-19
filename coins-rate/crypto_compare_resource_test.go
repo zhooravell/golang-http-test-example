@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -133,6 +134,34 @@ func TestCryptoCompareResource_BitCoinToUSDRateTimout(t *testing.T) {
 	}
 
 	if result != 0 {
+		t.Fail()
+	}
+}
+
+func TestCryptoCompareResource_BitCoinToUSDRateInvalidBaseURL(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+
+	resource := cryptoCompareResource{
+		httpClient: server.Client(),
+		baseUrl:    "%%2",
+	}
+
+	result, err := resource.BitCoinToUSDRate(nil)
+
+	if err == nil {
+		t.Error(err)
+	}
+
+	if result != 0 {
+		t.Fail()
+	}
+}
+
+func TestNewCryptoCompareResource(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	r := NewCryptoCompareResource(server.Client())
+
+	if reflect.TypeOf(r).String() != "*coins_rate.cryptoCompareResource" {
 		t.Fail()
 	}
 }
