@@ -33,13 +33,18 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/", handler)
+	log.Fatal(http.ListenAndServe(apiAddress, handlers()))
+}
 
-	log.Fatal(http.ListenAndServe(apiAddress, nil))
+func handlers() http.Handler {
+	r := http.NewServeMux()
+	r.HandleFunc("/rate/btc", getBitcoinRateHandler)
+
+	return r
 }
 
 // Handler to get BitCoin rate
-func handler(w http.ResponseWriter, r *http.Request) {
+func getBitcoinRateHandler(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	var mux sync.RWMutex
 	var result []float64
