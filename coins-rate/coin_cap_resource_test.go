@@ -16,6 +16,7 @@ func TestCoinCapResource_BitCoinToUSDRate(t *testing.T) {
 		w.Write([]byte(`{"data":{"id":"bitcoin","symbol":"BTC","currencySymbol":"₿","type":"crypto","rateUsd":"4010.8714336221081818"},"timestamp":1552990697033}`))
 		return
 	}))
+	defer server.Close()
 
 	resource := coinCapResource{
 		httpClient: server.Client(),
@@ -38,6 +39,7 @@ func TestCoinCapResource_BitCoinToUSDRateNotOK(t *testing.T) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}))
+	defer server.Close()
 
 	resource := coinCapResource{
 		httpClient: server.Client(),
@@ -65,6 +67,7 @@ func TestCoinCapResource_BitCoinToUSDRateCheckMethod(t *testing.T) {
 			t.Fail()
 		}
 	}))
+	defer server.Close()
 
 	resource := coinCapResource{
 		httpClient: server.Client(),
@@ -80,6 +83,7 @@ func TestCoinCapResource_BitCoinToUSDRateCheckURL(t *testing.T) {
 			t.Fail()
 		}
 	}))
+	defer server.Close()
 
 	resource := coinCapResource{
 		httpClient: server.Client(),
@@ -95,6 +99,7 @@ func TestCoinCapResource_BitCoinToUSDRateInvalidBody(t *testing.T) {
 		w.Write([]byte(`{"data":4010.87`))
 		return
 	}))
+	defer server.Close()
 
 	resource := coinCapResource{
 		httpClient: server.Client(),
@@ -118,6 +123,7 @@ func TestCoinCapResource_BitCoinToUSDRateTimout(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}))
+	defer server.Close()
 
 	resource := coinCapResource{
 		httpClient: server.Client(),
@@ -140,6 +146,7 @@ func TestCoinCapResource_BitCoinToUSDRateTimout(t *testing.T) {
 
 func TestCoinCapResource_BitCoinToUSDRateInvalidBaseURL(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	defer server.Close()
 
 	resource := coinCapResource{
 		httpClient: server.Client(),
@@ -159,6 +166,8 @@ func TestCoinCapResource_BitCoinToUSDRateInvalidBaseURL(t *testing.T) {
 
 func TestNewCoinCapResource(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	defer server.Close()
+
 	r := NewCoinCapResource(server.Client())
 
 	if reflect.TypeOf(r).String() != "*coins_rate.coinCapResource" {
